@@ -1,0 +1,14 @@
+{
+  "id": "12345",
+  "description": "consignment description",
+  "weight": 100,
+  "containers": [
+    {
+      "id": "123456,",
+      "customer_id": "2",
+      "origin": "beijing",
+      "user_id": "3"
+    }
+  ],
+  "vesselId": "1"
+}
