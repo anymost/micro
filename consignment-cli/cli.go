@@ -4,7 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	pb "github.com/anymost/micro/consignment-service/proto/consignment"
-	"google.golang.org/grpc"
+	"github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/cmd"
 	"io/ioutil"
 	"log"
 	"time"
@@ -32,11 +33,7 @@ func createConsignment(client pb.ShippingServiceClient, ctx context.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	res, err := client.CreateConsignment(ctx, consignment)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println(res.Consignment)
+	log.Println(client.CreateConsignment(ctx, consignment))
 }
 
 func getConsignments(client pb.ShippingServiceClient, ctx context.Context) {
@@ -50,18 +47,12 @@ func getConsignments(client pb.ShippingServiceClient, ctx context.Context) {
 }
 
 func main() {
-	conn, err := grpc.Dial(Address, grpc.WithInsecure())
-	defer conn.Close()
-	if err != nil {
+	if err := cmd.Init(); err != nil {
 		log.Fatal(err)
 	}
-
-	client := pb.NewShippingServiceClient(conn)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-
-	// createConsignment(client, ctx, consignment)
-	getConsignments(client, ctx)
+	c := pb.NewShippingServiceClient("go.micro.srv.consignment", client.NewClient())
+	ctx, _ := context.WithTimeout(context.Background(), time.Second)
+	// defer cancel()
+	createConsignment(c, ctx)
+	// getConsignments(c, ctx)
 }
